@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BarberShop On the Ruler</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #222;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        position: relative;
+      }
+
+      header img {
+        height: 200px;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      .carrossel {
+        background-color: #fff;
+        padding: 20px 0 40px;
+      }
+
+      .slider {
+        position: relative;
+        max-width: 90%;
+        margin: auto;
+        overflow: hidden;
+      }
+
+      .slides {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        width: 100%;
+      }
+
+      .slides img {
+        min-width: 100%;
+        height: 300px;
+        object-fit: contain;
+        border-radius: 10px;
+      }
+
+      .slider button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 1.5em;
+        border-radius: 50%;
+        z-index: 10;
+      }
+
+      .slider .prev {
+        left: 10px;
+      }
+
+      .slider .next {
+        right: 10px;
+      }
+
+      .nav-buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-buttons a {
+        text-decoration: none;
+      }
+
+      .nav-buttons button {
+        background-color: #22d4fd;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1em;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .nav-buttons button:hover {
+        background-color: #1aa9c7;
+      }
+
+      .info {
+        background-color: #333;
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+
+      .info p {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="static/logo_barbearia.jpg" alt="Logo da Barbearia" />
+      <div class="nav-buttons">
+        <a href="/agendamento"><button>Agendar Horário</button></a>
+        <button onclick="acessarAdmin()">Administrativo</button>
+      </div>
+    </header>
+
+    <section class="carrossel" id="carousel">
+      <h2 style="text-align: center; margin-top: 30px; color: #222">
+        Nossos Cortes
+      </h2>
+      <div class="slider">
+        <button class="prev">&#10094;</button>
+        <div class="slides">
+          <img src="static/corte1.jpeg" alt="Corte 1" />
+          <img src="static/corte2.jpeg" alt="Corte 2" />
+          <img src="static/corte3.jpeg" alt="Corte 3" />
+          <img src="static/corte4.jpeg" alt="Corte 4" />
+          <img src="static/corte5.jpeg" alt="Corte 5" />
+          <img src="static/corte6.jpeg" alt="Corte 6" />
+          <img src="static/corte7.jpeg" alt="Corte 7" />
+          <img src="static/corte8.jpeg" alt="Corte 8" />
+          <img src="static/corte9.jpeg" alt="Corte 9" />
+          <img src="static/corte10.jpeg" alt="Corte 10" />
+          <img src="static/corte11.jpeg" alt="Corte 11" />
+          <img src="static/corte12.jpeg" alt="Corte 12" />
+          <img src="static/corte13.jpeg" alt="Corte 13" />
+          <img src="static/corte14.jpeg" alt="Corte 14" />
+          <img src="static/corte15.jpeg" alt="Corte 15" />
+          <img src="static/corte16.jpeg" alt="Corte 16" />
+          <img src="static/corte17.jpeg" alt="Corte 17" />
+          <img src="static/corte18.jpeg" alt="Corte 18" />
+          <img src="static/corte19.jpeg" alt="Corte 19" />
+        </div>
+        <button class="next">&#10095;</button>
+      </div>
+    </section>
+
+    <section class="estilo">
+      <h2 style="text-align: center; color: #222">
+        Estilo Masculino é Atitude
+      </h2>
+      <p
+        style="
+          max-width: 800px;
+          margin: 20px auto;
+          text-align: center;
+          font-size: 1.1em;
+          color: #444;
+        "
+      >
+        Cuidar do visual é muito mais do que vaidade — é expressão de
+        identidade, confiança e respeito por si mesmo. Aqui na
+        <strong>On the Ruler</strong>, o estilo masculino é tratado com
+        seriedade e personalidade. Cada corte é pensado para realçar o melhor de
+        você, do clássico ao moderno.
+      </p>
+    </section>
+
+    <section class="info">
+      <p><strong>Endereço:</strong> Rua Pocinhos, 1795 - Santa Margarida</p>
+      <p><strong>Telefone:</strong> (21) 97278 7630</p>
+      <p><strong>Funcionamento:</strong></p>
+      <p>Quarta a Sexta: 09h às 19h</p>
+      <p>Sábado e Domingo: 10h às 22h</p>
+      <p>Feriados: 10h às 18h</p>
+      <p>Segunda e Terça: Fechado</p>
+    </section>
+
+    <footer
+      style="
+        background-color: #222;
+        color: #bbb;
+        text-align: center;
+        padding: 15px;
+        font-size: 0.9em;
+      "
+    >
+      Desenvolvido por Juliene Monteiro
+    </footer>
+
+    <script>
+      const slides = document.querySelector(".slides");
+      const images = document.querySelectorAll(".slides img");
+      const totalSlides = images.length;
+      let index = 0;
+
+      function showSlide(i) {
+        slides.style.transform = `translateX(-${i * 100}%)`;
+      }
+
+      function nextSlide() {
+        index = (index + 1) % totalSlides;
+        showSlide(index);
+      }
+
+      function prevSlide() {
+        index = (index - 1 + totalSlides) % totalSlides;
+        showSlide(index);
+      }
+
+      document.querySelector(".next").addEventListener("click", nextSlide);
+      document.querySelector(".prev").addEventListener("click", prevSlide);
+
+      let interval = setInterval(nextSlide, 4000);
+
+      const carousel = document.getElementById("carousel");
+      carousel.addEventListener("mouseenter", () => clearInterval(interval));
+      carousel.addEventListener("mouseleave", () => {
+        interval = setInterval(nextSlide, 4000);
+      });
+
+      // Proteção por senha para botão Administrativo
+      function acessarAdmin() {
+        const senha = prompt("Digite a senha de acesso:");
+        if (senha === "admin123") {
+          window.location.href = "/admin_page";
+        } else if (senha !== null) {
+          alert("Senha incorreta.");
+        }
+      }
+    </script>
+  </body>
+</html>

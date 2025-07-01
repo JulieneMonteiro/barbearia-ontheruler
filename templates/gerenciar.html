@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gerenciamento - Barbearia</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #222;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      main {
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+        background: white;
+      }
+
+      .nav-buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-buttons a {
+        text-decoration: none;
+      }
+
+      .nav-buttons button {
+        background-color: #22d4fd;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1em;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .nav-buttons button:hover {
+        background-color: #1aa9c7;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ccc;
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        padding: 10px 15px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 5px 5px 0 0;
+        background-color: #f0f0f0;
+      }
+
+      .tab.active {
+        background-color: white;
+        font-weight: bold;
+      }
+
+      section {
+        display: none;
+      }
+
+      section.active {
+        display: block;
+        border: 1px solid #ccc;
+        padding: 15px;
+        border-radius: 0 5px 5px 5px;
+        background-color: white;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="date"],
+      select {
+        padding: 6px;
+        width: 95%;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 8px 15px;
+        cursor: pointer;
+        background-color: #2c7;
+        border: none;
+        border-radius: 4px;
+        color: white;
+      }
+
+      button.action-btn {
+        background-color: #e44;
+      }
+
+      .checkbox-center {
+        text-align: center;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #222;
+        color: white;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Gerenciamento</h1>
+      <div class="nav-buttons">
+        <a href="/"><button>Home</button></a>
+        <a href="/agendamento"><button>Agendamento</button></a>
+        <a href="/admin_page"><button>Recepção</button></a>
+      </div>
+    </header>
+
+    <main>
+      <div class="tabs">
+        <div
+          class="tab active"
+          data-tab="barbeiros"
+          onclick="mostrarAba('barbeiros')"
+        >
+          Barbeiros
+        </div>
+        <div class="tab" data-tab="servicos" onclick="mostrarAba('servicos')">
+          Serviços
+        </div>
+        <div
+          class="tab"
+          data-tab="agendaEspecial"
+          onclick="mostrarAba('agendaEspecial')"
+        >
+          Agenda Especial
+        </div>
+      </div>
+
+      <!-- Barbeiros -->
+      <section id="barbeiros" class="active">
+        <h2>Barbeiros</h2>
+        <form id="form-barbeiro" onsubmit="criarBarbeiro(event)">
+          <label for="nomeBarbeiro">Nome do Barbeiro:</label>
+          <input type="text" id="nomeBarbeiro" required />
+          <button type="submit">Adicionar Barbeiro</button>
+        </form>
+
+        <table id="tabelaBarbeiros">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th class="checkbox-center">Folga</th>
+              <th>Comissão (R$)</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- Serviços -->
+      <section id="servicos">
+        <h2>Serviços</h2>
+        <form id="form-servico" onsubmit="criarServico(event)">
+          <label for="nomeServico">Nome do Serviço:</label>
+          <input type="text" id="nomeServico" required />
+          <label for="precoServico">Preço (R$):</label>
+          <input type="number" id="precoServico" step="0.01" min="0" required />
+          <button type="submit">Adicionar Serviço</button>
+        </form>
+
+        <table id="tabelaServicos">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Preço (R$)</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- Agenda Especial -->
+      <section id="agendaEspecial">
+        <h2>Agenda Especial (Feriados, Aberturas, Fechamentos)</h2>
+        <form id="form-agenda-especial" onsubmit="criarAgendaEspecial(event)">
+          <label for="dataAgendaEspecial">Data (AAAA-MM-DD):</label>
+          <input type="date" id="dataAgendaEspecial" required />
+          <label for="statusAgendaEspecial">Status:</label>
+          <select id="statusAgendaEspecial" required>
+            <option value="aberto">Aberto</option>
+            <option value="fechado">Fechado</option>
+          </select>
+          <button type="submit">Adicionar / Atualizar</button>
+        </form>
+
+        <table id="tabelaAgendaEspecial">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>Endereço:</strong> Rua dos Estilos, 123 - Centro</p>
+      <p><strong>Telefone:</strong> (11) 99999-1234</p>
+      <p>
+        <strong>Funcionamento:</strong> Qua a Sex: 09h às 19h | Sáb e Dom: 10h
+        às 22h | Feriados: 10h às 18h
+      </p>
+    </footer>
+
+    <script>
+      function mostrarAba(nome) {
+        document.querySelectorAll("section").forEach((sec) => {
+          sec.classList.remove("active");
+        });
+        document.getElementById(nome).classList.add("active");
+
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.classList.toggle("active", tab.dataset.tab === nome);
+        });
+      }
+
+      async function carregarBarbeiros() {
+        const res = await fetch("/barbeiros");
+        const data = await res.json();
+        const tbody = document.querySelector("#tabelaBarbeiros tbody");
+        tbody.innerHTML = "";
+
+        data.barbeiros.forEach((b) => {
+          const tr = document.createElement("tr");
+
+          const tdNome = document.createElement("td");
+          tdNome.textContent = b.nome;
+          tdNome.contentEditable = true;
+          tdNome.onblur = () =>
+            editarBarbeiroNome(b.id, tdNome.textContent.trim());
+          tr.appendChild(tdNome);
+
+          const tdFolga = document.createElement("td");
+          tdFolga.className = "checkbox-center";
+          const inputFolga = document.createElement("input");
+          inputFolga.type = "checkbox";
+          inputFolga.checked = !!b.folga;
+          inputFolga.onchange = () => atualizarFolga(b.id, inputFolga.checked);
+          tdFolga.appendChild(inputFolga);
+          tr.appendChild(tdFolga);
+
+          const tdComissao = document.createElement("td");
+          const valorComissao = b.comissao
+            ? parseFloat(b.comissao).toFixed(2)
+            : "0.00";
+          tdComissao.textContent = `R$ ${valorComissao}`;
+          tr.appendChild(tdComissao);
+
+          const tdAcoes = document.createElement("td");
+          const btnExcluir = document.createElement("button");
+          btnExcluir.textContent = "Excluir";
+          btnExcluir.className = "action-btn";
+          btnExcluir.onclick = () => excluirBarbeiro(b.id, b.nome);
+          tdAcoes.appendChild(btnExcluir);
+          tr.appendChild(tdAcoes);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function criarBarbeiro(event) {
+        event.preventDefault();
+        const nome = document.getElementById("nomeBarbeiro").value.trim();
+        if (!nome) return alert("Nome obrigatório.");
+
+        const res = await fetch("/barbeiros", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome }),
+        });
+
+        if (res.ok) {
+          document.getElementById("nomeBarbeiro").value = "";
+          await carregarBarbeiros();
+        } else {
+          alert("Erro ao criar barbeiro");
+        }
+      }
+
+      async function editarBarbeiroNome(id, nome) {
+        await fetch(`/barbeiros/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome }),
+        });
+      }
+
+      async function atualizarFolga(id, folga) {
+        await fetch(`/barbeiros/${id}/folga`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ folga }),
+        });
+      }
+
+      async function excluirBarbeiro(id, nome) {
+        if (!confirm(`Excluir barbeiro "${nome}"?`)) return;
+        await fetch(`/barbeiros/${id}`, { method: "DELETE" });
+        await carregarBarbeiros();
+      }
+
+      window.onload = () => {
+        carregarBarbeiros();
+        carregarServicos();
+        carregarAgendaEspecial();
+      };
+    </script>
+  </body>
+</html>

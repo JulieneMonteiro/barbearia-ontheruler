@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agendamento - Barbearia</title>
+    <link rel="stylesheet" href="static/style.css" />
+    <style>
+      #form-agendamento {
+        max-width: 700px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      #servicos-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+      }
+
+      #servicos-container label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f0f0f0;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+      }
+
+      #mensagem {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      @media (max-width: 600px) {
+        #servicos-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="static/logo_barbearia.jpg" alt="Logo da Barbearia" />
+
+      <h2>Agendamento de horários</h2>
+      <div class="nav-buttons">
+        <a href="/"><button>Home</button></a>
+      </div>
+    </header>
+
+    <form id="form-agendamento" onsubmit="realizarAgendamento(event)">
+      <label for="nome">Nome do Cliente:</label>
+      <input type="text" id="nome" required />
+
+      <label for="telefone">Telefone:</label>
+      <input type="text" id="telefone" required />
+
+      <label for="barbeiro">Barbeiro:</label>
+      <select id="barbeiro" required></select>
+
+      <label>Selecione seu serviço:</label>
+      <div id="servicos-container"></div>
+
+      <label for="data">Data:</label>
+      <input type="date" id="data" required onchange="verificarHorarios()" />
+
+      <label for="horario">Horário:</label>
+      <select id="horario" required></select>
+
+      <button type="submit">Agendar</button>
+    </form>
+
+    <div id="mensagem"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        carregarBarbeiros();
+        carregarServicos();
+      });
+
+      async function carregarBarbeiros() {
+        const res = await fetch("/barbeiros");
+        const data = await res.json();
+        const select = document.getElementById("barbeiro");
+
+        select.innerHTML = "<option value=''>Selecione o barbeiro</option>";
+        data.barbeiros
+          .filter((b) => !b.folga)
+          .forEach((b) => {
+            const option = document.createElement("option");
+            option.value = b.id;
+            option.textContent = b.nome;
+            select.appendChild(option);
+          });
+      }
+
+      async function carregarServicos() {
+        const res = await fetch("/servicos");
+        const data = await res.json();
+        const container = document.getElementById("servicos-container");
+
+        container.innerHTML = "";
+        data.servicos.forEach((s) => {
+          const label = document.createElement("label");
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.name = "servicos";
+          checkbox.value = s.id;
+
+          const texto = document.createTextNode(
+            `${s.nome} - R$${s.preco.toFixed(2)}`
+          );
+
+          label.appendChild(checkbox);
+          label.appendChild(texto);
+          container.appendChild(label);
+        });
+      }
+
+      async function verificarHorarios() {
+        const barbeiroId = document.getElementById("barbeiro").value;
+        const dataSelecionada = document.getElementById("data").value;
+        const servicosSelecionados = Array.from(
+          document.querySelectorAll("input[name='servicos']:checked")
+        ).map((cb) => cb.value);
+
+        if (
+          !barbeiroId ||
+          !dataSelecionada ||
+          servicosSelecionados.length === 0
+        )
+          return;
+
+        const res = await fetch("/verificar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            barbeiro_id: barbeiroId,
+            data: dataSelecionada,
+            servicos: servicosSelecionados,
+          }),
+        });
+
+        const data = await res.json();
+        const selectHorario = document.getElementById("horario");
+
+        selectHorario.innerHTML = "<option value=''>Selecione</option>";
+        data.horarios.forEach((h) => {
+          const option = document.createElement("option");
+          option.value = h;
+          option.textContent = h;
+          selectHorario.appendChild(option);
+        });
+      }
+
+      async function realizarAgendamento(e) {
+        e.preventDefault();
+
+        const nome = document.getElementById("nome").value;
+        const telefone = document.getElementById("telefone").value;
+        const barbeiroId = document.getElementById("barbeiro").value;
+        const data = document.getElementById("data").value;
+        const horario = document.getElementById("horario").value;
+        const servicosSelecionados = Array.from(
+          document.querySelectorAll("input[name='servicos']:checked")
+        ).map((cb) => parseInt(cb.value));
+
+        const res = await fetch("/agendar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome_cliente: nome,
+            telefone,
+            barbeiro_id: barbeiroId,
+            data,
+            horario,
+            servicos: servicosSelecionados,
+          }),
+        });
+
+        const dataRes = await res.json();
+        const msg = document.getElementById("mensagem");
+        msg.textContent = dataRes.mensagem || dataRes.erro;
+
+        if (res.ok) {
+          document.getElementById("form-agendamento").reset();
+          document.getElementById("horario").innerHTML = "";
+        }
+      }
+    </script>
+    <section class="info">
+      <p><strong>Endereço:</strong> Rua Pocinhos, 1795 - Santa Margarida</p>
+      <p><strong>Telefone:</strong> (21) 97278 7630</p>
+    </section>
+    <footer
+      style="
+        background-color: #222;
+        color: #bbb;
+        text-align: center;
+        padding: 15px;
+        font-size: 0.9em;
+      "
+    >
+      Desenvolvido por Juliene Monteiro
+    </footer>
+  </body>
+</html>

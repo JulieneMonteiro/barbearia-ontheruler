@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Painel Administrativo - Barbearia</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        background: #fff;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+        font-size: 0.95em;
+      }
+
+      th {
+        background-color: #f0f0f0;
+      }
+
+      select,
+      input[type="text"],
+      input[type="date"],
+      input[type="time"] {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 6px 12px;
+        cursor: pointer;
+        background-color: #222;
+        color: white;
+        border: none;
+        border-radius: 4px;
+      }
+
+      button:hover {
+        background-color: #444;
+      }
+
+      select[multiple] {
+        height: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Painel Administrativo</h1>
+    </header>
+
+    <div class="nav-buttons">
+      <a href="/"><button>Home</button></a>
+      <a href="/agendamento"><button>Agendamento</button></a>
+      <a href="/admin/gerenciar"><button>Gerenciar</button></a>
+    </div>
+
+    <main style="max-width: 1000px; margin: auto; padding: 20px">
+      <table id="tabela-agendamentos">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Telefone</th>
+            <th>Barbeiro</th>
+            <th>Serviços</th>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Atendido</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+
+    <script>
+      async function carregarDados() {
+        const res = await fetch("/admin/agendamentos");
+        const agendamentos = await res.json();
+
+        const barbeirosRes = await fetch("/barbeiros");
+        const barbeiros = (await barbeirosRes.json()).barbeiros;
+
+        const servicosRes = await fetch("/servicos");
+        const servicos = (await servicosRes.json()).servicos;
+
+        const tbody = document.querySelector("#tabela-agendamentos tbody");
+        tbody.innerHTML = agendamentos
+          .map(
+            (ag) => `
+        <tr>
+          <td><input type="text" value="${
+            ag.nome_cliente
+          }" onchange="editarCampo(${
+              ag.id
+            }, 'nome_cliente', this.value)" /></td>
+          <td><input type="text" value="${ag.telefone}" onchange="editarCampo(${
+              ag.id
+            }, 'telefone', this.value)" /></td>
+          <td>
+            <select onchange="editarCampo(${ag.id}, 'barbeiro_id', this.value)">
+              ${barbeiros
+                .map(
+                  (b) => `
+                <option value="${b.id}" ${
+                    b.id == ag.barbeiro_id ? "selected" : ""
+                  }>${b.nome}</option>
+              `
+                )
+                .join("")}
+            </select>
+          </td>
+          <td>
+            <select multiple onchange="editarServicos(${ag.id}, this)">
+              ${servicos
+                .map(
+                  (s) => `
+                <option value="${s.id}" ${
+                    ag.servicos.some((as) => as.id === s.id) ? "selected" : ""
+                  }>${s.nome}</option>
+              `
+                )
+                .join("")}
+            </select>
+          </td>
+          <td><input type="date" value="${ag.data}" onchange="editarCampo(${
+              ag.id
+            }, 'data', this.value)" /></td>
+          <td><input type="time" value="${ag.horario}" onchange="editarCampo(${
+              ag.id
+            }, 'horario', this.value)" /></td>
+          <td><input type="checkbox" ${
+            ag.atendido ? "checked" : ""
+          } onchange="editarCampo(${ag.id}, 'atendido', this.checked)" /></td>
+          <td><button onclick="cancelarAgendamento(${
+            ag.id
+          })">Cancelar</button></td>
+        </tr>
+      `
+          )
+          .join("");
+      }
+
+      // ✅ Corrigido: agora usa a rota correta /admin/editar/
+      async function editarCampo(id, campo, valor) {
+        await fetch(`/admin/editar/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ campo, valor }),
+        });
+      }
+
+      async function editarServicos(id, selectEl) {
+        const valores = Array.from(selectEl.selectedOptions).map((opt) =>
+          parseInt(opt.value)
+        );
+        await fetch(`/admin/agendamentos/${id}/servicos`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ servicos: valores }),
+        });
+      }
+
+      async function cancelarAgendamento(id) {
+        if (confirm("Deseja realmente cancelar este agendamento?")) {
+          await fetch(`/cliente/agendamentos/${id}`, { method: "DELETE" });
+          carregarDados();
+        }
+      }
+
+      carregarDados();
+    </script>
+
+    <section class="info">
+      <p><strong>Endereço:</strong> Rua Pocinhos, 1795 - Santa Margarida</p>
+      <p><strong>Telefone:</strong> (21) 97278 7630</p>
+    </section>
+
+    <footer
+      style="
+        background-color: #222;
+        color: #bbb;
+        text-align: center;
+        padding: 15px;
+        font-size: 0.9em;
+      "
+    >
+      Desenvolvido por Juliene Monteiro
+    </footer>
+  </body>
+</html>
