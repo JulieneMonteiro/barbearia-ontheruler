@@ -72,9 +72,12 @@ Você pode acessar o projeto em produção (Render):
 Em breve o link
 
 ##  Desenvolvido por
-Juliene Monteiro
+ Juliene Monteiro
+
  https://www.linkedin.com/in/julienemonteiro/
+ 
  julienemonteiro83@gmail.com
+ 
  Portfólio completo em breve.
 
 
