@@ -1,4 +1,4 @@
-# 💈 BarberShop On the Ruler - Sistema de Agendamento
+#  BarberShop On the Ruler - Sistema de Agendamento
 
 Sistema web completo para agendamento de serviços de barbearia, com painel administrativo, controle de barbeiros, serviços e agenda especial (feriados e folgas). Desenvolvido com foco em automação e organização de atendimentos.
 
@@ -70,3 +70,11 @@ Também faz parte do meu portfólio como desenvolvedora web.
 ##  Acesso Online
 Você pode acessar o projeto em produção (Render):
 Em breve o link
+
+##  Desenvolvido por
+Juliene Monteiro
+ https://www.linkedin.com/in/julienemonteiro/
+ julienemonteiro83@gmail.com
+ Portfólio completo em breve.
+
+
